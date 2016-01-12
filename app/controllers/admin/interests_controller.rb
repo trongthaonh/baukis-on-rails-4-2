@@ -33,7 +33,7 @@ class Admin::InterestsController < Admin::Base
     @interest_form = Admin::InterestForm.new(Interest.find(params[:id]))
     @interest_form.assign_attributes(params[:form])
     if @interest_form.save
-      flash.notice = '興味・関心を修正しました。'
+      flash.notice = '興味・関心を更新しました。'
       redirect_to action: 'index'
     else
       flash.now.alert = '入力に誤りがあります。'
