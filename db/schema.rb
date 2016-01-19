@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160102091921) do
+ActiveRecord::Schema.define(version: 20160116041837) do
 
   create_table "addresses", force: :cascade do |t|
     t.integer  "customer_id",   limit: 4,                null: false
@@ -82,6 +82,7 @@ ActiveRecord::Schema.define(version: 20160102091921) do
     t.integer  "birth_month",      limit: 4
     t.integer  "birth_mday",       limit: 4
     t.string   "job_title",        limit: 255
+    t.string   "other_interest",   limit: 255
   end
 
   add_index "customers", ["birth_mday", "family_name_kana", "given_name_kana"], name: "index_customers_on_birth_mday_and_furigana", using: :btree
@@ -122,8 +123,9 @@ ActiveRecord::Schema.define(version: 20160102091921) do
 
   create_table "interests", force: :cascade do |t|
     t.string   "title",      limit: 255
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
+    t.boolean  "deletable",              default: true, null: false
   end
 
   create_table "message_tag_links", force: :cascade do |t|
