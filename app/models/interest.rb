@@ -5,13 +5,22 @@ class Interest < ActiveRecord::Base
 
   attr_reader :checked
 
-  validates :title, presence: true, length: { maximum: 8, allow_blank: false }
+  validates :title, presence: true, uniqueness: true, length: { maximum: 8, allow_blank: false }
 
   before_destroy :confirm_destroy_action
+  before_save :confirm_savable
 
   protected
     def confirm_destroy_action
       # Only allow delete action when interests records number greater than 2
-      Interest.count > 2
+      if Interest.count > 2 && self.deletable
+        self.customer_interests.delete_all
+      end
+    end
+
+    def confirm_savable
+      if !self.new_record?
+        self.deletable
+      end
     end
 end

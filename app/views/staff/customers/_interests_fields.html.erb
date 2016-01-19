@@ -2,5 +2,7 @@
   <%= markup(:li) do |m|
     m << ff.check_box(:checked, { checked: !interest.id.nil? })
     m << ff.label(:checked, cip.title)
+    m << ff.hidden_field(:deletable, { value: cip.deletable, class: 'deletable_flag' })
+    m << ff.hidden_field(:interest_id, { value: cip.interest_id })
   end %>
 <% end %>

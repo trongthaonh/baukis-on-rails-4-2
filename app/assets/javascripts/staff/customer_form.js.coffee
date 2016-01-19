@@ -16,6 +16,20 @@ $(document).on 'page:change', ->
   $('input#form_inputs_work_address').on 'click', ->
     toggle_work_address_fields()
 
+  $("#customer_interests").find(".deletable_flag").each ->
+    t = $(this)
+    if t.val() == 'false'
+      checkbox = t.siblings('input:checkbox')
+      checkbox.on 'change', ->
+        $('#other_interest').toggle()
+
+      if checkbox.attr("checked")
+        $('#other_interest').show()
+      else
+        $('#other_interest').hide()
+      $("#customer_interests").append(t.parent().clone(true))
+      t.parent().remove();
+
 toggle_home_address_fields = ->
   checked = $('input#form_inputs_home_address').prop('checked')
   $('fieldset#home-address-fields input').prop('disabled', !checked)
