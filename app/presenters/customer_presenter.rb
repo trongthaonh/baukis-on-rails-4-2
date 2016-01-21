@@ -26,7 +26,15 @@ class CustomerPresenter < ModelPresenter
   end
 
   def interests
-    object.interests.pluck(:title).join(' - ')
+    interest_titles = ''
+    object.interests.order(deletable: :desc, id: :asc).each do |i|
+      if i.deletable
+        interest_titles << i.title + ' - '
+      else
+        interest_titles << object.other_interest
+      end
+    end
+    interest_titles
   end
 
   def personal_phones
