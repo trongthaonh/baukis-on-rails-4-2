@@ -84,9 +84,17 @@ class Staff::CustomerForm
     customer.customer_interests.size.times do |index|
       attributes = customer_interests[index.to_s]
       if attributes && attributes[:checked] == '1'
-        customer.customer_interests[index].assign_attributes(attributes.except(:checked))
+        customer.customer_interests.detect{ |ci| ci.interest_id == attributes[:interest_id].to_i }.assign_attributes(attributes.except(:checked, :deletable))
+
+        if attributes[:deletable] == 'false'
+          customer.other_interest_checked = true
+        end
       else
-        customer.customer_interests[index].mark_for_destruction
+        customer.customer_interests.detect{ |ci| ci.interest_id == attributes[:interest_id].to_i }.mark_for_destruction
+
+        if attributes[:deletable] == 'false'
+          customer.other_interest = ''
+        end
       end
     end
   end
@@ -96,7 +104,7 @@ class Staff::CustomerForm
     @params.require(:customer).permit(
       :email, :password,
       :family_name, :given_name, :family_name_kana, :given_name_kana,
-      :birthday, :gender, :job_title
+      :birthday, :gender, :job_title, :other_interest
     )
   end
 
@@ -118,6 +126,6 @@ class Staff::CustomerForm
   end
 
   def customer_interests_params(record_name)
-    @params.require(record_name).permit(customer_interests: [ :checked ])
+    @params.require(record_name).permit(customer_interests: [ :checked, :deletable, :interest_id ])
   end
 end

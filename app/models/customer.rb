@@ -3,6 +3,8 @@ class Customer < ActiveRecord::Base
   include PersonalNameHolder
   include PasswordHolder
 
+  attr_accessor :other_interest_checked
+
   has_many :addresses, dependent: :destroy
   has_one :home_address, autosave: true
   has_one :work_address, autosave: true
@@ -34,6 +36,7 @@ class Customer < ActiveRecord::Base
     allow_blank: true
   }
   validates :job_title, inclusion: { in: JOB_TITLES, allow_blank: true }
+  validates :other_interest, presence: true, if: :other_interest_checked?
 
   before_save do
     if birthday
@@ -41,5 +44,13 @@ class Customer < ActiveRecord::Base
       self.birth_month = birthday.month
       self.birth_mday = birthday.mday
     end
+  end
+
+  def ordered_interests
+    customer_interests.to_a.sort_by{ |i| i[:interest_id] }
+  end
+
+  def other_interest_checked?
+    other_interest_checked
   end
 end
