@@ -13,3 +13,8 @@ interest_titles.each do |t|
   )
 end
 
+Interest.create(
+    title: "Other",
+    deletable: false
+)
+

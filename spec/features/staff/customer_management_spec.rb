@@ -12,6 +12,8 @@ feature '職員による顧客管理' do
     %w(旅行 映画 音楽 ファッション 料理 スポーツ).each do |title|
       FactoryGirl.create(:interest, title: title)
     end
+
+    FactoryGirl.create(:interest, title: "Other", deletable: false)
   end
 
   scenario '職員が顧客（基本情報のみ）を追加する' do
@@ -29,6 +31,8 @@ feature '職員による顧客管理' do
     check '旅行'
     check '映画'
     check '音楽'
+    check 'Other'
+    fill_in 'form_customer_other_interest', with: 'My other interest'
     click_button '登録'
 
     new_customer = Customer.order(:id).last
@@ -36,7 +40,8 @@ feature '職員による顧客管理' do
     expect(new_customer.birthday).to eq(Date.new(1970, 1, 1))
     expect(new_customer.gender).to eq('female')
     expect(new_customer.job_title).to eq('会社役員')
-    expect(new_customer.interests.size).to eq(3)
+    expect(new_customer.interests.size).to eq(4)
+    expect(new_customer.other_interest).to eq('My other interest')
     expect(new_customer.home_address).to be_nil
     expect(new_customer.work_address).to be_nil
   end
@@ -142,5 +147,23 @@ feature '職員による顧客管理' do
 
     customer.reload
     expect(customer.work_address.company_name).to eq('テスト')
+  end
+
+  scenario 'Customer uncheck the other interest, it should remove the value from the Customer table' do
+    customer.interests << Interest.find_by(title: 'Other')
+    customer.other_interest = "Something"
+    customer.save
+
+    click_link '顧客管理'
+    first('table.listing').click_link '編集'
+    check '旅行'
+    check '映画'
+    check '音楽'
+    uncheck 'Other'
+    click_button '更新'
+
+    customer.reload
+    expect(customer.interests.size).to eq(3)
+    expect(customer.other_interest).to eq('')
   end
 end

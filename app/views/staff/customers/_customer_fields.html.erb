@@ -13,12 +13,16 @@
 
     m.div(class: 'input-block') do
       m << p.decorated_label(:interests, '関心事')
-      m.ul do
-        p.object.customer_interests.to_a.sort_by{ |i| i[:interest_id] }.each_with_index do |interest, index|
-          cip = CustomerInterestPresenter.new(interest, self)
-          m << render('interests_fields', f: ff, interest: interest, index: index, cip: cip)
+      m.ul(id: "customer_interests") do
+        p.object.ordered_interests.each_with_index do |customer_interest, index|
+          cip = CustomerInterestPresenter.new(customer_interest, self)
+          m << render('interests_fields', f: ff, interest: customer_interest, index: index, cip: cip)
         end
       end
+    end
+
+    m.div(class: 'input-block', id: 'other_interest') do
+      m << p.text_field_block(:other_interest, "Other Interest", size: 20)
     end
 
     m.div(class: 'input-block') do
